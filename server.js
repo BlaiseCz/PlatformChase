@@ -48,7 +48,8 @@ function connected(socket) {
     })
 
     socket.on('userCommands', data => {
-        console.log(data)
-        
+        players[socket.id] = data
+        console.log('move by ' + socket.id)
+        console.log(`${data.position_x} -- ${data.position_y}`)
     })
 }
