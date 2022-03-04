@@ -9,7 +9,9 @@ process.stdin.on('keypress', (str, key) => {
     } else if (key.name === 'right') {
         console.log('prawo')
     } else if (key.name === 'up') {
-        console.log('skok')
+        console.log('gora')
+    } else if (key.name === 'down') {
+        console.log('dol')
     }
     else {
         console.log(`You pressed the "${str}" key`);

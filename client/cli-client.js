@@ -32,16 +32,20 @@ function cliMovesListener() {
         if (key.ctrl && key.name === 'c') {
             process.exit();
         } else if (key.name === 'left') {
-            console.log('lewo')
+            console.log('left')
             players[selfID].position_x -=1
             userCommands({position_x: players[selfID].position_x, position_y: players[selfID].position_y})
         } else if (key.name === 'right') {
-            console.log('prawo')
+            console.log('right')
             players[selfID].position_x += 1
             userCommands({position_x: players[selfID].position_x, position_y: players[selfID].position_y})
         } else if (key.name === 'up') {
-            console.log('skok')
+            console.log('up')
             players[selfID].position_y +=1
+            userCommands({position_x: players[selfID].position_x, position_y: players[selfID].position_y})
+        } else if (key.name === 'down') {
+            console.log('down')
+            players[selfID].position_y -=1
             userCommands({position_x: players[selfID].position_x, position_y: players[selfID].position_y})
         }
     });
