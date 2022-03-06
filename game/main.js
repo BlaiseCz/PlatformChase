@@ -8,6 +8,7 @@ window.addEventListener("load", function (event) {
 
 
     var resize = function (event) {
+        // display.drawMap(game.world.map, game.world.columns);
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
         display.render();
     };

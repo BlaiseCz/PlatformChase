@@ -37,7 +37,7 @@ Controller.ButtonInput.prototype = {
     constructor: Controller.ButtonInput,
 
     getInput: function (isPressed) {
-        if (this.isPressed != isPressed) this.active = isPressed;
+        if (this.isPressed !== isPressed) this.active = isPressed;
         this.isPressed = isPressed;
     }
 };

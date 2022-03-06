@@ -3,7 +3,7 @@ const Game = function () {
     this.world = {
 
         background_color: "rgba(40,48,56,0.25)",
-        friction: 0.9,
+        friction: 0.5,
         player: new Game.Player(),
         height: 72,
         width: 128,
@@ -43,12 +43,12 @@ Game.prototype = {constructor: Game};
 
 Game.Player = function (x, y) {
     this.color = "#ff0000";
-    this.height = 16;
+    this.height = 4;
+    this.width = 4;
     this.velocity_x = 0;
     this.velocity_y = 0;
-    this.width = 16;
-    this.x = 100;
-    this.y = 50;
+    this.x = 50;
+    this.y = 10;
 };
 
 Game.Player.prototype = {
@@ -72,5 +72,4 @@ Game.Player.prototype = {
         this.x += this.velocity_x;
         this.y += this.velocity_y;
     }
-
 };
