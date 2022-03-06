@@ -2,3 +2,4 @@ node_modules
 .idea
 bots/bin
 bots/lib
+bots/pyvenv.cfg
