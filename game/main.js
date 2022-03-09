@@ -8,14 +8,14 @@ window.addEventListener("load", function (event) {
 
 
     var resize = function (event) {
-        // display.drawMap(game.world.map, game.world.columns);
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
         display.render();
     };
 
     var render = function () {
-        display.fill(game.world.background_color);// Clear background to game's background color.
+        display.fill(game.world.background_color);
         display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
+        display.drawMap(game.world.map);
         display.render();
     };
 

@@ -22,9 +22,8 @@ let players = {};
 
 function connected(socket) {
     socket.on('newPlayer', data => {
-        console.log("New client connected, with id: "+socket.id);
+        console.log("New cli-client connected, with id: "+socket.id);
         players[socket.id] = data;
-        console.log("Starting position: "+players[socket.id].position_x+" - "+players[socket.id].position_y);
         console.log("Current number of players: "+Object.keys(players).length);
         console.log("players dictionary: ", players);
         io.emit('updatePlayers', players);
@@ -37,7 +36,7 @@ function connected(socket) {
 
     socket.on('disconnect', function(){
         delete players[socket.id];
-        console.log("Goodbye client with id "+socket.id);
+        console.log("Goodbye cli-client with id "+socket.id);
         console.log("Current number of players: "+Object.keys(players).length);
         console.log("players dictionary: ", players);
         io.emit('updatePlayers', players);
@@ -47,7 +46,7 @@ function connected(socket) {
         socket.broadcast.emit('ServerClientHello', data);
     })
 
-    socket.on('userCommands', data => {
+    socket.on('updatePosition', data => {
         players[socket.id] = data
         console.log('move by ' + socket.id)
         console.log(`${data.position_x} -- ${data.position_y}`)

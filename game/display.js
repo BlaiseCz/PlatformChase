@@ -3,14 +3,17 @@ const Display = function(canvas) {
     this.buffer  = document.createElement("canvas").getContext("2d");
     this.context = canvas.getContext("2d");
 
-    this.drawMap = function (map, columns) {
+    this.drawMap = function (map) {
+
+        for (let i = 0; i < map.length; i++) {
+            this.buffer.fillStyle = "black";
+            this.buffer.fillRect(map[i][0], map[i][1], 4, 4);
+        }
     };
 
     this.drawRectangle = function(x, y, width, height, color) {
-
         this.buffer.fillStyle = color;
         this.buffer.fillRect(Math.floor(x), Math.floor(y), width, height);
-
     };
 
     this.fill = function(color) {
