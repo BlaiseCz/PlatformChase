@@ -8,11 +8,10 @@ const Game = function () {
         height: 72,
         width: 128,
 
-        map: [[50, 15], [50, 19]],
-        // map: [[25,60], [35, 55], [99,10], [45, 66],
-        //     [20, 10],[20, 14],[20, 18],[20, 22],[20, 26],[20, 30],
-        //     [100, 10],[104, 10],[108,10],[112,10],[116,10],[120,10],
-        //     [44,48], [48,48], [52,48], [56, 48], [60, 48], [64, 48], [68, 48], [72, 48], [76,48]],
+        map: [[25,60], [35, 55], [99,10], [45, 66],
+            [20, 10],[20, 14],[20, 18],[20, 22],[20, 26],[20, 30],
+            [100, 10],[104, 10],[108,10],[112,10],[116,10],[120,10],
+            [44,48], [48,48], [52,48], [56, 48], [60, 48], [64, 48], [68, 48], [72, 48], [76,48]],
 
         collideObject: function (player) {
 
@@ -34,14 +33,20 @@ const Game = function () {
 
             //map blocks
             for (let i = 0; i < this.map.length; i++) {
-                //
-                console.log(player.y + ' ' + this.map[i][1])
-                if(player.y < this.map[i][1] + player.width/2 && player.y > this.map[i][1] - player.width/2
-                    && player.x < this.map[i][0] + player.width/2 && player.x) {
-                    player.velocity_y = 0;
-                    player.y = this.map[i][1] + 4
+                if(this.detectCollision(player, this.map[i][0], this.map[i][1])) {
+                    console.log(player.x + ' ' + player.y)
+                    console.log(this.map[i])
+                    player.x = 10
+                    player.y = 10
+                    player.velocity_x = 0
+                    player.velocity_y = 0
+                    break;
                 }
             }
+        },
+
+        detectCollision: function(player, tile_x, tile_y) {
+            return !(player.x>tile_x+4 || player.x + player.width < tile_x || player.y > tile_y + 4 || player.y + player.height < tile_y)
         },
 
         update: function () {
