@@ -6,7 +6,6 @@ window.addEventListener("load", function (event) {
         controller.moveKey(event.type, event.keyCode);
     };
 
-
     var resize = function (event) {
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
         display.render();
@@ -16,6 +15,7 @@ window.addEventListener("load", function (event) {
         display.fill(game.world.background_color);
         display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
         display.drawMap(game.world.map);
+        display.drawCoins(game.world.map);
         display.render();
     };
 
@@ -32,7 +32,7 @@ window.addEventListener("load", function (event) {
         if (controller.up.active) {
             game.world.player.moveUp();
         }
-        game.update();
+        game.update(display.coinsCords);
     };
 
     var controller = new Controller();
@@ -49,7 +49,5 @@ window.addEventListener("load", function (event) {
     window.addEventListener("resize", resize);
 
     resize();
-
     engine.start();
-
 });

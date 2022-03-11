@@ -6,7 +6,7 @@ const Controller = function () {
     this.down = new Controller.ButtonInput();
 
     this.moveKey = function (type, key_code) {
-        var isPressed = (type === "keydown");
+        let isPressed = (type === "keydown");
         switch (key_code) {
             case 37:
                 this.left.getInput(isPressed);
