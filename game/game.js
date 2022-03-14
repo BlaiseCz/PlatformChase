@@ -48,10 +48,7 @@ const Game = function () {
             for (let i = 0; i < coins_cords.length; i++) {
                 if(this.detectCollision(player.x, player.y, coins_cords[i][0], coins_cords[i][1], 2)) {
                     player.result += 1
-                    console.log(player.result)
-                    console.log(coins_cords)
                     coins_cords.splice(i, 1)
-                    console.log(coins_cords)
                     break;
                 }
             }
