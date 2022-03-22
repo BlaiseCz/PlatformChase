@@ -9,7 +9,6 @@ const Game = function () {
         width: 128,
 
         lava: {
-            //map: [[70, 30]],
             map: [[25, 60], [35, 55], [99, 10], [45, 66],
                 [20, 10], [20, 14], [20, 18], [20, 22], [20, 26], [20, 30],
                 [100, 10], [104, 10], [108, 10], [112, 10], [116, 10], [120, 10],
@@ -20,7 +19,7 @@ const Game = function () {
 
         coins: {
             cords: [],
-            limit: 120,
+            limit: 10,
             h: 2,
             w: 2,
         },
@@ -90,7 +89,7 @@ const Game = function () {
 
         collideCoins: function (player) {
             for (let i = 0; i < this.coins.cords.length; i++) {
-                if (this.detectCollision(player.x, player.y, this.coins.cords[i][0], this.coins.cords[i][1], 2)) {
+                if (this.detectCoinsCollision(player.x, player.y, this.coins.cords[i][0], this.coins.cords[i][1])) {
                     player.result += 1
                     this.coins.cords.splice(i, 1)
                     break;
@@ -103,6 +102,14 @@ const Game = function () {
                 Math.floor(p_x) + rect_side_len < tile_x ||
                 Math.floor(p_y) > tile_y + rect_side_len ||
                 Math.floor(p_y) + rect_side_len < tile_y)
+        },
+
+        detectCoinsCollision: function (p_x, p_y, tile_x, tile_y) {
+            //57.86251823888269 30.197802162240254 55 31
+            return !(Math.floor(p_x) > tile_x + 2 ||
+                Math.floor(p_x) + 4 < tile_x ||
+                Math.floor(p_y) > tile_y + 2 ||
+                Math.floor(p_y) + 4 < tile_y)
         },
 
         update: function () {
@@ -124,6 +131,7 @@ const Game = function () {
 Game.prototype = {constructor: Game};
 
 Game.Player = function (x, y) {
+    this.id = undefined;
     this.color = "#0090ff";
     this.height = 4;
     this.width = 4;
@@ -154,11 +162,5 @@ Game.Player.prototype = {
     update: function () {
         this.x += this.velocity_x;
         this.y += this.velocity_y;
-
-        // socket.emit('updatePosition',
-        //     {
-        //         position_x: this.x,
-        //         position_y: this.y
-        // })
     }
 };
