@@ -4,7 +4,8 @@ const Game = function () {
 
         background_color: "rgba(40,48,56,0.25)",
         friction: 0.5,
-        player: new Game.Player(),
+        player: new Game.Player(), //current view player
+        players: {}, //all players
         height: 72,
         width: 128,
 
@@ -19,9 +20,15 @@ const Game = function () {
 
         coins: {
             cords: [],
-            limit: 10,
+            limit: 20,
             h: 2,
             w: 2,
+        },
+
+
+
+        updatePlayers: function () {
+            this.players['me'] = this.player
         },
 
         updateCoins: function () {
@@ -46,12 +53,6 @@ const Game = function () {
                     }
                 }
             }
-        },
-
-        randBetween: function (min, max) {
-            return Math.floor(
-                Math.random() * (max - min) + min
-            )
         },
 
         collideWalls: function (player) {
@@ -105,7 +106,6 @@ const Game = function () {
         },
 
         detectCoinsCollision: function (p_x, p_y, tile_x, tile_y) {
-            //57.86251823888269 30.197802162240254 55 31
             return !(Math.floor(p_x) > tile_x + 2 ||
                 Math.floor(p_x) + 4 < tile_x ||
                 Math.floor(p_y) > tile_y + 2 ||
@@ -113,26 +113,42 @@ const Game = function () {
         },
 
         update: function () {
-            this.player.update();
-            this.player.velocity_x *= this.friction;
-            this.player.velocity_y *= this.friction;
-            this.collideWalls(this.player);
-            this.collideCoins(this.player);
-            this.updateCoins();
-        }
+            for (const [, player] of Object.entries(this.players)) {
+                player.update();
+                player.velocity_x *= this.friction;
+                player.velocity_y *= this.friction;
+                this.collideWalls(player);
+                this.collideCoins(player);
+                this.updateCoins();
+            }
+        },
+        //HELPER FUNCTIONS
+        randBetween: function (min, max) {
+            return Math.floor(Math.random() * (max - min) + min
+            )
+        },
     };
 
     this.update = function () {
         this.world.update();
     };
 
+    socket.on('updatePlayers', data => {
+        if(data.id !== selfID) {
+            let newPlayer = new Game.Player()
+            newPlayer.color =  "green"
+            this.world.players[data.id] = newPlayer
+        }
+    })
+
 };
 
 Game.prototype = {constructor: Game};
 
-Game.Player = function (x, y) {
-    this.id = undefined;
+
+Game.Player = function (x, y, color) {
     this.color = "#0090ff";
+    this.id = selfID
     this.height = 4;
     this.width = 4;
     this.velocity_x = 0;
@@ -162,5 +178,6 @@ Game.Player.prototype = {
     update: function () {
         this.x += this.velocity_x;
         this.y += this.velocity_y;
+
     }
 };

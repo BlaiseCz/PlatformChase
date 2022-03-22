@@ -2,33 +2,34 @@ window.addEventListener("load", function (event) {
 
     "use strict";
 
-    var keyPressed = function (event) {
+    const keyPressed = function (event) {
         controller.moveKey(event.type, event.keyCode);
     };
 
-    var resize = function (event) {
+    const resize = function (event) {
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
         display.render();
 
-        var rectangle = display.context.canvas.getBoundingClientRect();
+        let rectangle = display.context.canvas.getBoundingClientRect();
 
         p.style.left = (rectangle.left - 220) + "px";
-        p.style.top  = rectangle.top + "px";
+        p.style.top = rectangle.top + "px";
         p.style.fontSize = "25px";
     };
 
-    var render = function () {
+    const render = function () {
         display.fill(game.world.background_color);
-        display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
         display.drawRectanglesFromCords(game.world.lava.map, game.world.lava.h, game.world.lava.w, "red");
         display.drawRectanglesFromCords(game.world.coins.cords, game.world.coins.h, game.world.coins.w, "yellow");
 
-        p.innerHTML = "Player1: " + game.world.player.result;
-
+        for (const [key, player] of Object.entries(game.world.players)) {
+            display.drawRectangle(player.x, player.y, player.width, player.height, player.color)
+            p.innerHTML = "Player " + key + ": " + player.result + "  <br>  "
+        }
         display.render();
     };
 
-    var update = function () {
+    const update = function () {
         if (controller.left.active) {
             game.world.player.moveLeft();
         }
@@ -44,12 +45,13 @@ window.addEventListener("load", function (event) {
         game.update();
     };
 
-    var controller = new Controller();
-    var display = new Display(document.querySelector("canvas"));
-    var game = new Game();
-    var engine = new Engine(1000 / 24, render, update);
+    const game = new Game();
+    const controller = new Controller();
+    const display = new Display(document.querySelector("canvas"));
+    const engine = new Engine(1000 / 24, render, update);
 
-    var p = document.createElement("p");
+    const p = document.createElement("p");
+
     p.setAttribute("style", "color:#c07000; font-size:2.0em; position:fixed;");
     p.innerHTML = "Player1: 0";
     document.body.appendChild(p);
@@ -62,6 +64,7 @@ window.addEventListener("load", function (event) {
     window.addEventListener("resize", resize);
 
     game.world.updateCoins()
+    game.world.updatePlayers()
 
     resize();
     engine.start();

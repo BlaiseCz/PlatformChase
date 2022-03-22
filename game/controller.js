@@ -1,4 +1,4 @@
-const Controller = function () {
+var Controller = function () {
 
     this.left = new Controller.ButtonInput();
     this.right = new Controller.ButtonInput();
