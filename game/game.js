@@ -132,15 +132,6 @@ const Game = function () {
     this.update = function () {
         this.world.update();
     };
-
-    socket.on('updatePlayers', data => {
-        if(data.id !== selfID) {
-            let newPlayer = new Game.Player()
-            newPlayer.color =  "green"
-            this.world.players[data.id] = newPlayer
-        }
-    })
-
 };
 
 Game.prototype = {constructor: Game};
@@ -148,7 +139,6 @@ Game.prototype = {constructor: Game};
 
 Game.Player = function (x, y, color) {
     this.color = "#0090ff";
-    this.id = selfID
     this.height = 4;
     this.width = 4;
     this.velocity_x = 0;
