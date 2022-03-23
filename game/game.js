@@ -33,7 +33,9 @@ const Game = function () {
             this.player = new Game.Player("me", "#0090ff") //current view playez
             this.bot = new Game.Player("bot1", "#6ad320") //random bot
 
+            this.coins.cords = []
             this.updatePlayers()
+            this.updateCoins()
         },
 
         makeMoveWithBot: function () {
