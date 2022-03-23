@@ -21,15 +21,18 @@ window.addEventListener("load", function (event) {
         display.fill(game.world.background_color);
         display.drawRectanglesFromCords(game.world.lava.map, game.world.lava.h, game.world.lava.w, "red");
         display.drawRectanglesFromCords(game.world.coins.cords, game.world.coins.h, game.world.coins.w, "yellow");
-
+        let text = ""
         for (const [key, player] of Object.entries(game.world.players)) {
             display.drawRectangle(player.x, player.y, player.width, player.height, player.color)
-            p.innerHTML = "Player " + key + ": " + player.result + "  <br>  "
+           text += "Player " + key + ": " + player.result + "  <br>  "
         }
+        p.innerHTML = text
         display.render();
     };
 
     const update = function () {
+        game.world.makeMoveWithBot();
+
         if (controller.left.active) {
             game.world.player.moveLeft();
         }
@@ -53,7 +56,6 @@ window.addEventListener("load", function (event) {
     const p = document.createElement("p");
 
     p.setAttribute("style", "color:#c07000; font-size:2.0em; position:fixed;");
-    p.innerHTML = "Player1: 0";
     document.body.appendChild(p);
 
     display.buffer.canvas.height = game.world.height;

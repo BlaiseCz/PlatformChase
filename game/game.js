@@ -4,7 +4,8 @@ const Game = function () {
 
         background_color: "rgba(40,48,56,0.25)",
         friction: 0.5,
-        player: new Game.Player(), //current view player
+        player: new Game.Player("me", "#0090ff"), //current view player
+        bot: new Game.Player("bot1", "#6ad320"), //random bot
         players: {}, //all players
         height: 72,
         width: 128,
@@ -26,9 +27,17 @@ const Game = function () {
         },
 
 
+        makeMoveWithBot: function () {
+            for (const [, player] of Object.entries(this.players)) {
+                if(player.type === "bot1") {
+                    player.randomMove()
+                }
+            }
+        },
 
         updatePlayers: function () {
             this.players['me'] = this.player
+            this.players['bot1'] = this.bot
         },
 
         updateCoins: function () {
@@ -137,8 +146,9 @@ const Game = function () {
 Game.prototype = {constructor: Game};
 
 
-Game.Player = function (x, y, color) {
-    this.color = "#0090ff";
+Game.Player = function (type, color) {
+    this.type = type
+    this.color = color;
     this.height = 4;
     this.width = 4;
     this.velocity_x = 0;
@@ -168,6 +178,27 @@ Game.Player.prototype = {
     update: function () {
         this.x += this.velocity_x;
         this.y += this.velocity_y;
+    },
 
+    randomMove: function () {
+        const rndInt = Math.floor(Math.random() * 6) + 1
+
+        switch (rndInt) {
+            case 1:
+                this.moveRight()
+                break
+            case 2:
+                this.moveLeft()
+                break
+            case 3:
+                this.moveUp()
+                break
+            case 4:
+                this.moveDown()
+                break
+            default:
+                console.log("doing nothing")
+        }
     }
 };
+
