@@ -12,15 +12,15 @@ window.addEventListener("load", function (event) {
 
         let rectangle = display.context.canvas.getBoundingClientRect();
 
-        p.style.left = (rectangle.left - 220) + "px";
+        p.style.left = (rectangle.left - 350) + "px";
         p.style.top = rectangle.top + "px";
         p.style.fontSize = "25px";
 
-        timer.style.left = (rectangle.left - 220) + "px";
+        timer.style.left = (rectangle.left - 350) + "px";
         timer.style.top = (rectangle.top + 100) + "px";
         timer.style.fontSize = "25px";
 
-        gameCounter.style.left = (rectangle.left - 220) + "px";
+        gameCounter.style.left = (rectangle.left - 350) + "px";
         gameCounter.style.top = (rectangle.top + 150) + "px";
         gameCounter.style.fontSize = "25px";
     };
@@ -33,7 +33,7 @@ window.addEventListener("load", function (event) {
         let text = ""
         for (const [key, player] of Object.entries(game.world.players)) {
             display.drawRectangle(player.x, player.y, player.width, player.height, player.color)
-            text += "Player " + key + ": " + player.result + "  <br>  "
+            text += "Player " + key + ": " + player.score + " wins : " + player.wins +" <br>  "
         }
 
         p.innerHTML = text
@@ -53,16 +53,16 @@ window.addEventListener("load", function (event) {
         game.world.makeMoveWithBot();
 
         if (controller.left.active) {
-            game.world.player.moveLeft();
+            game.world.human_player.moveLeft();
         }
         if (controller.right.active) {
-            game.world.player.moveRight();
+            game.world.human_player.moveRight();
         }
         if (controller.down.active) {
-            game.world.player.moveDown();
+            game.world.human_player.moveDown();
         }
         if (controller.up.active) {
-            game.world.player.moveUp();
+            game.world.human_player.moveUp();
         }
         game.update();
     };

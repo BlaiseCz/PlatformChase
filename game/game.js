@@ -1,14 +1,16 @@
 const Game = function () {
 
-    this.duration = 15000;
+    this.duration = 5000;
     this.game_num = 1;
 
     this.world = {
+        //players
+        human_player: new Game.Player("me", "#0090ff"), //current view player
+        bot: new Game.Player("bot1", "#37ab84"), //random bot
+        rl_bot: new Game.Player("rl_bot1", "#ee038e"), //rl bot
 
         background_color: "rgba(40,48,56,1)",
         friction: 0.5,
-        player: new Game.Player("me", "#0090ff"), //current view player
-        bot: new Game.Player("bot1", "#37ab84"), //random bot
         players: {}, //all players
         height: 100,
         width: 128,
@@ -24,14 +26,39 @@ const Game = function () {
 
         coins: {
             cords: [],
-            limit: 100,
+            limit: 150,
             h: 2,
             w: 2,
         },
 
         resetState: function () {
-            this.player = new Game.Player("me", "#0090ff") //current view playez
-            this.bot = new Game.Player("bot1", "#6ad320") //random bot
+
+            let results = []
+
+            for (const [, player] of Object.entries(this.players)) {
+                let score = player.score
+                let name = player.name
+
+                results.push(
+                    {
+                        "name": name,
+                        "score": score
+                    })
+                player.resetState()
+            }
+
+            let best_score = 0
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].score >= best_score) {
+                    best_score = results[i].score
+                }
+            }
+
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].score === best_score) {
+                    this.players[results[i].name].wins += 1
+                }
+            }
 
             this.coins.cords = []
             this.updatePlayers()
@@ -40,15 +67,16 @@ const Game = function () {
 
         makeMoveWithBot: function () {
             for (const [, player] of Object.entries(this.players)) {
-                if(player.type === "bot1") {
+                if (player.name === "bot1" || player.name === "rl_bot1") {
                     player.randomMove()
                 }
             }
         },
 
         updatePlayers: function () {
-            this.players['me'] = this.player
+            this.players['me'] = this.human_player
             this.players['bot1'] = this.bot
+            this.players['rl_bot1'] = this.rl_bot
         },
 
         updateCoins: function () {
@@ -101,7 +129,7 @@ const Game = function () {
                     player.velocity_x = 0
                     player.velocity_y = 0
 
-                    player.result -= 10
+                    player.score -= 5
                     break;
                 }
             }
@@ -111,7 +139,7 @@ const Game = function () {
         collideCoins: function (player) {
             for (let i = 0; i < this.coins.cords.length; i++) {
                 if (this.detectCoinsCollision(player.x, player.y, this.coins.cords[i][0], this.coins.cords[i][1])) {
-                    player.result += 1
+                    player.score += 1
                     this.coins.cords.splice(i, 1)
                     break;
                 }
@@ -158,7 +186,7 @@ Game.prototype = {constructor: Game};
 
 
 Game.Player = function (type, color) {
-    this.type = type
+    this.name = type
     this.color = color;
     this.height = 4;
     this.width = 4;
@@ -166,7 +194,8 @@ Game.Player = function (type, color) {
     this.velocity_y = 0;
     this.x = 60;
     this.y = 20;
-    this.result = 0;
+    this.score = 0;
+    this.wins = 0;
 };
 
 Game.Player.prototype = {
@@ -189,6 +218,14 @@ Game.Player.prototype = {
     update: function () {
         this.x += this.velocity_x;
         this.y += this.velocity_y;
+    },
+
+    resetState: function () {
+        this.velocity_x = 0;
+        this.velocity_y = 0;
+        this.x = 60;
+        this.y = 20;
+        this.score = 0;
     },
 
     randomMove: function () {
