@@ -10,7 +10,7 @@ const Game = function () {
         player: new Game.Player("me", "#0090ff"), //current view player
         bot: new Game.Player("bot1", "#37ab84"), //random bot
         players: {}, //all players
-        height: 72,
+        height: 100,
         width: 128,
 
         lava: {
@@ -58,7 +58,7 @@ const Game = function () {
                     while (this.coins.cords.length < this.coins.limit) {
 
                         cord_x = this.randBetween(0, 126)
-                        cord_y = this.randBetween(0, 70)
+                        cord_y = this.randBetween(0, 98)
 
                         for (let j = 0; j < this.lava.map.length; j++) {
                             if (this.detectCollision(cord_x, cord_y, this.lava.map[j][0], this.lava.map[j][1], 4)) {
