@@ -5,10 +5,10 @@ const Game = function () {
 
     this.world = {
 
-        background_color: "rgba(40,48,56,0.25)",
+        background_color: "rgba(40,48,56,1)",
         friction: 0.5,
         player: new Game.Player("me", "#0090ff"), //current view player
-        bot: new Game.Player("bot1", "#6ad320"), //random bot
+        bot: new Game.Player("bot1", "#37ab84"), //random bot
         players: {}, //all players
         height: 72,
         width: 128,
