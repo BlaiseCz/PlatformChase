@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/BlaiseCz/PlatformChase#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^3.15.0",
+    "@tensorflow/tfjs-node-gpu": "^3.15.0",
     "express": "^4.17.1",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1"
