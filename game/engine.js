@@ -3,6 +3,7 @@ const Engine = function (time_step, update, render) {
     this.accumulated_time = 0;
     this.animation_frame_request = undefined;
     this.time = undefined;
+    this.elapsedTime = 0;
     this.time_step = time_step;
     this.updated = false;
 
@@ -10,9 +11,9 @@ const Engine = function (time_step, update, render) {
     this.render = render;
 
     this.run = function (time_stamp) {
-
         this.accumulated_time += time_stamp - this.time;
         this.time = time_stamp;
+        this.elapsedTime = time_stamp;
 
         if (this.accumulated_time >= this.time_step * 3) {
             this.accumulated_time = this.time_step;

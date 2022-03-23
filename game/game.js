@@ -1,5 +1,8 @@
 const Game = function () {
 
+    this.duration = 15000;
+    this.game_num = 1;
+
     this.world = {
 
         background_color: "rgba(40,48,56,0.25)",
@@ -21,11 +24,17 @@ const Game = function () {
 
         coins: {
             cords: [],
-            limit: 20,
+            limit: 100,
             h: 2,
             w: 2,
         },
 
+        resetState: function () {
+            this.player = new Game.Player("me", "#0090ff") //current view playez
+            this.bot = new Game.Player("bot1", "#6ad320") //random bot
+
+            this.updatePlayers()
+        },
 
         makeMoveWithBot: function () {
             for (const [, player] of Object.entries(this.players)) {
