@@ -1,6 +1,3 @@
 node_modules
 .DS_Store
 .idea
-bots/bin
-bots/lib
-bots/pyvenv.cfg
