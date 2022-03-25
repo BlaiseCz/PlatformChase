@@ -67,8 +67,10 @@ const Game = function () {
 
         makeMoveWithBot: function () {
             for (const [, player] of Object.entries(this.players)) {
-                if (player.name === "bot1" || player.name === "rl_bot1") {
+                if (player.name === "bot1") {
                     player.randomMove()
+                } else if (player.name === "rl_bot1") {
+                    player.learnedMove()
                 }
             }
         },
@@ -196,6 +198,10 @@ Game.Player = function (type, color) {
     this.y = 20;
     this.score = 0;
     this.wins = 0;
+
+    if(type === 'rl_bot1') {
+        this.model = new RlModel()
+    }
 };
 
 Game.Player.prototype = {
@@ -232,6 +238,27 @@ Game.Player.prototype = {
         const rndInt = Math.floor(Math.random() * 6) + 1
 
         switch (rndInt) {
+            case 1:
+                this.moveRight()
+                break
+            case 2:
+                this.moveLeft()
+                break
+            case 3:
+                this.moveUp()
+                break
+            case 4:
+                this.moveDown()
+                break
+            default:
+                console.log("doing nothing")
+        }
+    },
+
+    learnedMove: function () {
+        let move = this.model.makeMove()
+
+        switch (move) {
             case 1:
                 this.moveRight()
                 break

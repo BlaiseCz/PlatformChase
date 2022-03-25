@@ -7,7 +7,7 @@ window.addEventListener("load", function (event) {
     };
 
     const resize = function (event) {
-        display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
+        display.resize(document.documentElement.clientWidth - 96, document.documentElement.clientHeight - 96, game.world.height / game.world.width);
         display.render();
 
         let rectangle = display.context.canvas.getBoundingClientRect();
