@@ -65,6 +65,8 @@ window.addEventListener("load", function (event) {
             game.world.human_player.moveUp();
         }
         game.update();
+
+        game.world.process_transition()
     };
 
     const game = new Game();

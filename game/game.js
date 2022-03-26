@@ -75,6 +75,14 @@ const Game = function () {
             }
         },
 
+        process_transition: function () {
+            for (const [, player] of Object.entries(this.players)) {
+                if (player.name === "rl_bot1") {
+                    player.learn()
+                }
+            }
+        },
+
         updatePlayers: function () {
             this.players['me'] = this.human_player
             this.players['bot1'] = this.bot
@@ -199,8 +207,8 @@ Game.Player = function (type, color) {
     this.score = 0;
     this.wins = 0;
 
-    if(type === 'rl_bot1') {
-        this.model = new RlModel()
+    if (type === 'rl_bot1') {
+        this.model = new RlModel(50, 5, 32)
     }
 };
 
@@ -236,8 +244,18 @@ Game.Player.prototype = {
 
     randomMove: function () {
         const rndInt = Math.floor(Math.random() * 6) + 1
+        this.takeAction(rndInt)
+    },
 
-        switch (rndInt) {
+    learnedMove: function () {
+        let state = []
+        console.log('learnedMove')
+        // let move = this.model.makeMove(state, true)
+        // this.takeAction(move)
+    },
+
+    takeAction: function (move) {
+        switch (move) {
             case 1:
                 this.moveRight()
                 break
@@ -255,25 +273,9 @@ Game.Player.prototype = {
         }
     },
 
-    learnedMove: function () {
-        let move = this.model.makeMove()
-
-        switch (move) {
-            case 1:
-                this.moveRight()
-                break
-            case 2:
-                this.moveLeft()
-                break
-            case 3:
-                this.moveUp()
-                break
-            case 4:
-                this.moveDown()
-                break
-            default:
-                console.log("doing nothing")
-        }
+    learn: function () {
+        console.log('learning')
+        // this.model.train()
     }
 };
 
