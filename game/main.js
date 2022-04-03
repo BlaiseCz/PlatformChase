@@ -44,6 +44,7 @@ window.addEventListener("load", function (event) {
 
         if(engine.elapsedTime >= game.game_num * game.duration) {
             console.log(game.game_num)
+            game.log_bots_result()
             game.game_num += 1
             game.world.resetState()
         }
@@ -52,24 +53,31 @@ window.addEventListener("load", function (event) {
     const update = function () {
         game.world.makeMoveWithBot();
 
-        if (controller.left.active) {
-            game.world.human_player.moveLeft();
-        }
-        if (controller.right.active) {
-            game.world.human_player.moveRight();
-        }
-        if (controller.down.active) {
-            game.world.human_player.moveDown();
-        }
-        if (controller.up.active) {
-            game.world.human_player.moveUp();
-        }
+        let prev_coins = game.world.coins.cords
+        let prev_player_state = [game.world.players['rl_bot1'].x, game.world.players['rl_bot1'].y]
+
         game.update();
 
-        game.world.process_transition()
+        let updated_coins = game.world.coins.cords
+
+        game.world.learn_bots(prev_coins, prev_player_state, updated_coins)
+        // # Wykonajmy akcje
+        // next_observation, reward, done, _ = env.step(action)
+        // total_reward += reward
+        //
+        // # Jeśli się uczymy, przekażmy przejście do agenta
+        // if learning: #explore
+        // agent.process_transition(observation, action, reward, next_observation, done)
+        //
+        // observation = next_observation
+
+
+        // agent.process_transition(observation, action, reward, next_observation, done)
+        // game.world.learn(previous_coins_setup, previous_player_state, game.world.coins.cords)
     };
 
-    const game = new Game();
+    const mapGenerator = new MapGenerator()
+    const game = new Game(mapGenerator.getRandom());
     const controller = new Controller();
     const display = new Display(document.querySelector("canvas"));
     const engine = new Engine(1000 / 48, render, update);

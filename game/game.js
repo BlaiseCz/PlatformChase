@@ -1,14 +1,9 @@
-const Game = function () {
+const Game = function (map) {
 
-    this.duration = 5000;
+    this.duration = 10000;
     this.game_num = 1;
 
     this.world = {
-        //players
-        human_player: new Game.Player("me", "#0090ff"), //current view player
-        bot: new Game.Player("bot1", "#37ab84"), //random bot
-        rl_bot: new Game.Player("rl_bot1", "#ee038e"), //rl bot
-
         background_color: "rgba(40,48,56,1)",
         friction: 0.5,
         players: {}, //all players
@@ -16,23 +11,24 @@ const Game = function () {
         width: 128,
 
         lava: {
-            map: [[25, 60], [35, 55], [99, 10], [45, 66],
-                [20, 10], [20, 14], [20, 18], [20, 22], [20, 26], [20, 30],
-                [100, 10], [104, 10], [108, 10], [112, 10], [116, 10], [120, 10],
-                [44, 48], [48, 48], [52, 48], [56, 48], [60, 48], [64, 48], [68, 48], [72, 48], [76, 48]],
+            map: map,
             h: 4,
             w: 4,
         },
 
         coins: {
             cords: [],
-            limit: 150,
+            limit: 80,
             h: 2,
             w: 2,
         },
 
-        resetState: function () {
+        //players
+        // human_player: new Game.Player("me", "#0090ff"), //current view player
+        // bot: new Game.Player("bot1", "#37ab84"), //random bot
+        rl_bot: new Game.Player("rl_bot1", "#ee038e", map), //rl bot
 
+        resetState: function () {
             let results = []
 
             for (const [, player] of Object.entries(this.players)) {
@@ -70,22 +66,35 @@ const Game = function () {
                 if (player.name === "bot1") {
                     player.randomMove()
                 } else if (player.name === "rl_bot1") {
-                    player.learnedMove()
+                    player.learnedMove(this.coins.cords)
                 }
             }
         },
 
-        process_transition: function () {
+        learn_bots: function (previous_coins_setup, previous_player_state, coins_cords) {
             for (const [, player] of Object.entries(this.players)) {
                 if (player.name === "rl_bot1") {
-                    player.learn()
+                    let reward = player.score - player.prev_score
+                    let prev_state = {
+                        'coinsCords' : previous_coins_setup,
+                        'playerCords': [previous_player_state.x, previous_player_state.y]
+                    }
+
+                    let current_state = {
+                        'coinsCords' : coins_cords,
+                        'playerCords': [this.x, this.y]
+                    }
+
+                    console.log('learning')
+                    console.log(prev_state, player.last_action, reward, current_state)
+                    player.train(prev_state, player.last_action, reward, current_state)
                 }
             }
         },
 
         updatePlayers: function () {
-            this.players['me'] = this.human_player
-            this.players['bot1'] = this.bot
+            // this.players['me'] = this.human_player
+            // this.players['bot1'] = this.bot
             this.players['rl_bot1'] = this.rl_bot
         },
 
@@ -145,7 +154,6 @@ const Game = function () {
             }
         },
 
-
         collideCoins: function (player) {
             for (let i = 0; i < this.coins.cords.length; i++) {
                 if (this.detectCoinsCollision(player.x, player.y, this.coins.cords[i][0], this.coins.cords[i][1])) {
@@ -172,6 +180,7 @@ const Game = function () {
 
         update: function () {
             for (const [, player] of Object.entries(this.players)) {
+                player.prev_score = player.score
                 player.update();
                 player.velocity_x *= this.friction;
                 player.velocity_y *= this.friction;
@@ -195,7 +204,7 @@ const Game = function () {
 Game.prototype = {constructor: Game};
 
 
-Game.Player = function (type, color) {
+Game.Player = function (type, color, map) {
     this.name = type
     this.color = color;
     this.height = 4;
@@ -205,10 +214,15 @@ Game.Player = function (type, color) {
     this.x = 60;
     this.y = 20;
     this.score = 0;
+    this.prev_score = 0;
     this.wins = 0;
+    this.last_action = 0
 
-    if (type === 'rl_bot1') {
-        this.model = new RlModel(50, 5, 32)
+    if(type === 'rl_bot1') { //
+        let memory_size = 1000
+        let actions = 5
+        let state_size = 58
+        this.model = new RlModel(state_size, actions,  memory_size, map)
     }
 };
 
@@ -243,19 +257,26 @@ Game.Player.prototype = {
     },
 
     randomMove: function () {
-        const rndInt = Math.floor(Math.random() * 6) + 1
-        this.takeAction(rndInt)
+        const randomMove = Math.floor(Math.random() * 6) + 1
+        this.makeMove(randomMove)
     },
 
-    learnedMove: function () {
-        let state = []
-        console.log('learnedMove')
-        // let move = this.model.makeMove(state, true)
-        // this.takeAction(move)
+    learnedMove: function (coinsCords) {
+        let move = this.model.predictMove({
+            'coinsCords' : coinsCords,
+            'playerCords': [this.x, this.y]
+        }, false)
+
+        this.makeMove(move)
     },
 
-    takeAction: function (move) {
-        switch (move) {
+    train: function (prev_state, action, reward, current_state) {
+      this.model.train(prev_state, action, reward, current_state)
+    },
+
+    makeMove: function (moveNum) {
+        console.log('move num ', moveNum)
+        switch (moveNum) {
             case 1:
                 this.moveRight()
                 break
@@ -269,13 +290,9 @@ Game.Player.prototype = {
                 this.moveDown()
                 break
             default:
-                console.log("doing nothing")
+                // console.log("doing nothing")
         }
+        this.last_action = moveNum
     },
-
-    learn: function () {
-        console.log('learning')
-        // this.model.train()
-    }
 };
 

@@ -1,10 +1,13 @@
-const tf = require('@tensorflow/tfjs-node-gpu')
+const tf = require('@tensorflow/tfjs')
 
-model = tf.sequential();
-model.add(tf.layers.dense({ units: 1, inputShape: [200] }));
-model.compile({
-    loss: 'meanSquaredError',
-    optimizer: 'sgd',
-    metrics: ['MAE']
+const model = tf.sequential({
+    layers: [
+        tf.layers.dense({inputShape: 126, units: 32, activation: 'relu'}),
+        tf.layers.dense({units: 64, activation: 'relu'}),
+        tf.layers.dense({units: 5, activation: 'softmax'}),
+    ],
+    optimizer: tf.train.adam({learningRate: 0.001, epsilon: 0.0001}),
+    loss: 'meanSquaredError'
 });
 
+console.log(model.summary())
