@@ -66,7 +66,17 @@ const Game = function (map) {
                 if (player.name === "bot1") {
                     player.randomMove()
                 } else if (player.name === "rl_bot1") {
-                    player.learnedMove(this.coins.cords)
+
+                    let gameState = {
+                        'coinsCords' : this.coins.cords,
+                        'playerCords': [player.x, player.y]
+                    }
+
+                    let distancesToLava = this.getPlayerDistanceToLava(gameState['playerCords'], this.lava.map)
+                    let distancesToCoins = this.getPlayerDistanceToCoins(gameState['coinsCords'], gameState['playerCords'])
+                    let state = distancesToCoins.concat(distancesToLava);
+
+                    player.learnedMove(state, this.lava.map)
                 }
             }
         },
@@ -75,19 +85,26 @@ const Game = function (map) {
             for (const [, player] of Object.entries(this.players)) {
                 if (player.name === "rl_bot1") {
                     let reward = player.score - player.prev_score
-                    let prev_state = {
-                        'coinsCords' : previous_coins_setup,
-                        'playerCords': [previous_player_state.x, previous_player_state.y]
+
+                    let prev_state_dict = {
+                        'coinsCords': previous_coins_setup,
+                        'playerCords': previous_player_state
                     }
 
-                    let current_state = {
-                        'coinsCords' : coins_cords,
-                        'playerCords': [this.x, this.y]
+                    let prev_distancesToLava = this.getPlayerDistanceToLava(prev_state_dict['playerCords'], this.lava.map)
+                    let prev_distancesToCoins = this.getPlayerDistanceToCoins(prev_state_dict['coinsCords'], prev_state_dict['playerCords'])
+                    let prev_state = prev_distancesToLava.concat(prev_distancesToCoins);
+
+                    let current_state_dict = {
+                        'coinsCords': coins_cords,
+                        'playerCords': [player.x, player.y]
                     }
 
-                    console.log('learning')
-                    console.log(prev_state, player.last_action, reward, current_state)
-                    player.train(prev_state, player.last_action, reward, current_state)
+                    let distancesToLava = this.getPlayerDistanceToLava(current_state_dict['playerCords'], this.lava.map)
+                    let distancesToCoins = this.getPlayerDistanceToCoins(current_state_dict['coinsCords'], current_state_dict['playerCords'])
+                    let current_state = distancesToCoins.concat(distancesToLava);
+
+                    player.train(prev_state.dataSync(), player.last_action, reward, current_state.dataSync())
                 }
             }
         },
@@ -178,6 +195,36 @@ const Game = function (map) {
                 Math.floor(p_y) + 4 < tile_y)
         },
 
+        //HELPER FUNCTIONS - STATE
+        getPlayerDistanceToLava: function (playerPos, map) {
+            let playerLavaDistance = []
+            for(let i = 0; i < map.length ; i++) {
+                let distance = this.getDistance(playerPos[0], playerPos[1], map[i][0], map[i][1])
+                playerLavaDistance.push(distance)
+            }
+
+            playerLavaDistance = playerLavaDistance.sort().slice(0,8)
+            return tf.tensor1d(playerLavaDistance);
+        },
+
+        getPlayerDistanceToCoins: function (coinsCords, playerPos) {
+            let playerCoinsDistance = []
+            for(let i = 0; i < coinsCords.length ; i++) {
+                let distance = this.getDistance(playerPos[0], playerPos[1], coinsCords[i][0], coinsCords[i][1])
+                playerCoinsDistance.push(distance)
+            }
+
+            playerCoinsDistance = playerCoinsDistance.sort().slice(0,50)
+            return tf.tensor1d(playerCoinsDistance);
+        },
+
+        getDistance: function(x1, y1, x2, y2){
+            let y = x2 - x1;
+            let x = y2 - y1;
+            return Math.sqrt(x * x + y * y);
+        },
+        //HELPER FUNCTIONS - STATE END
+
         update: function () {
             for (const [, player] of Object.entries(this.players)) {
                 player.prev_score = player.score
@@ -261,11 +308,8 @@ Game.Player.prototype = {
         this.makeMove(randomMove)
     },
 
-    learnedMove: function (coinsCords) {
-        let move = this.model.predictMove({
-            'coinsCords' : coinsCords,
-            'playerCords': [this.x, this.y]
-        }, false)
+    learnedMove: function (state) {
+        let move = this.model.predictMove(state, false)
 
         this.makeMove(move)
     },

@@ -11,3 +11,5 @@ const model = tf.sequential({
 });
 
 console.log(model.summary())
+
+tf.losses.

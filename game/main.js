@@ -59,21 +59,7 @@ window.addEventListener("load", function (event) {
         game.update();
 
         let updated_coins = game.world.coins.cords
-
         game.world.learn_bots(prev_coins, prev_player_state, updated_coins)
-        // # Wykonajmy akcje
-        // next_observation, reward, done, _ = env.step(action)
-        // total_reward += reward
-        //
-        // # Jeśli się uczymy, przekażmy przejście do agenta
-        // if learning: #explore
-        // agent.process_transition(observation, action, reward, next_observation, done)
-        //
-        // observation = next_observation
-
-
-        // agent.process_transition(observation, action, reward, next_observation, done)
-        // game.world.learn(previous_coins_setup, previous_player_state, game.world.coins.cords)
     };
 
     const mapGenerator = new MapGenerator()
